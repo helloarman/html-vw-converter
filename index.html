@@ -33,6 +33,29 @@
         .copied {
             color: green;
         }
+
+        .history {
+            margin-top: 20px;
+            font-size: 14px;
+        }
+
+        .history-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .history-list {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .history-item {
+            margin: 5px 0;
+            background-color: #f9f9f9;
+            padding: 5px;
+            border: 1px solid #ccc;
+            cursor: pointer; /* Change cursor to pointer */
+        }
     </style>
 </head>
 <body>
@@ -44,43 +67,89 @@
             Output: 
             <span id="clampOutput" title="Click to copy">clamp(7px, 0.53vw, 10px)</span>
         </p>
+
+        <div class="history">
+            <p class="history-title">Conversion History (Last 10):</p>
+            <ul id="historyList" class="history-list"></ul>
+        </div>
     </div>
 
     <script>
         const inputField = document.getElementById('pixelInput');
         const outputField = document.getElementById('clampOutput');
+        const historyList = document.getElementById('historyList');
         const viewportWidth = 1903; // default viewport width
+        let history = [];
 
-        inputField.addEventListener('input', function() {
+        // Load history from local storage
+        function loadHistory() {
+            const storedHistory = localStorage.getItem('conversionHistory');
+            if (storedHistory) {
+                history = JSON.parse(storedHistory);
+                updateHistoryList();
+            }
+        }
+
+        function updateClampOutput() {
             let pixelValue = parseFloat(inputField.value);
             if (!isNaN(pixelValue)) {
                 let lowerBound = Math.max(0, pixelValue - 3);  // reducing 3 from the input
                 let vwValue = (pixelValue / viewportWidth) * 100;
-                outputField.textContent = `clamp(${lowerBound}px, ${vwValue.toFixed(2)}vw, ${pixelValue}px)`;
+                const clampValue = `clamp(${lowerBound}px, ${vwValue.toFixed(2)}vw, ${pixelValue}px)`;
+                outputField.textContent = clampValue;
+
+                addToHistory(clampValue);
             } else {
                 outputField.textContent = 'clamp(7px, 0.53vw, 10px)';  // default example output
+            }
+        }
+
+        function addToHistory(clampValue) {
+            history.unshift(clampValue); // Add the new conversion to the beginning of the array
+            if (history.length > 10) {
+                history.pop(); // Remove the last item if there are more than 10 items
+            }
+            localStorage.setItem('conversionHistory', JSON.stringify(history)); // Save to local storage
+            updateHistoryList();
+        }
+
+        function updateHistoryList() {
+            historyList.innerHTML = ''; // Clear current history list
+            history.forEach((item, index) => {
+                let li = document.createElement('li');
+                li.textContent = `${index + 1}. ${item}`;
+                li.classList.add('history-item');
+                li.addEventListener('click', () => copyToClipboard(item)); // Add click event listener
+                historyList.appendChild(li);
+            });
+        }
+
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                outputField.classList.add('copied');  // Change color to indicate successful copy
+                outputField.textContent = "Copied!";
+
+                setTimeout(() => {
+                    outputField.classList.remove('copied');
+                    updateClampOutput();  // Reset to the current clamp output
+                }, 2000);  // Revert back after 2 seconds
+            });
+        }
+
+        // Listen for the "Enter" key press to trigger the conversion and history update
+        inputField.addEventListener('keydown', function(event) {
+            if (event.key === 'Enter') {
+                updateClampOutput();
             }
         });
 
         outputField.addEventListener('click', function() {
             const clampText = outputField.textContent;
-            navigator.clipboard.writeText(clampText).then(() => {
-                outputField.classList.add('copied');  // Change color to indicate successful copy
-                outputField.textContent = "Copied!";
-                
-                setTimeout(() => {
-                    outputField.classList.remove('copied');
-                    let pixelValue = parseFloat(inputField.value);
-                    if (!isNaN(pixelValue)) {
-                        let lowerBound = Math.max(0, pixelValue - 3);  
-                        let vwValue = (pixelValue / viewportWidth) * 100;
-                        outputField.textContent = `clamp(${lowerBound}px, ${vwValue.toFixed(2)}vw, ${pixelValue}px)`;
-                    } else {
-                        outputField.textContent = 'clamp(7px, 0.53vw, 10px)';  // default
-                    }
-                }, 2000);  // Revert back after 2 seconds
-            });
+            copyToClipboard(clampText); // Use the copyToClipboard function
         });
+
+        // Load history when the page is loaded
+        window.onload = loadHistory;
     </script>
 </body>
 </html>
