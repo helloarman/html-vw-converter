@@ -128,7 +128,7 @@
             navigator.clipboard.writeText(text).then(() => {
                 outputField.classList.add('copied');  // Change color to indicate successful copy
                 outputField.textContent = "Copied!";
-
+                inputField.value = "";  // Clear the input field
                 setTimeout(() => {
                     outputField.classList.remove('copied');
                     updateClampOutput();  // Reset to the current clamp output
