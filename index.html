@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pixel to VW Converter</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 50px;
+        }
+
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+        }
+
+        .output {
+            font-size: 18px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Pixel to VW Converter</h2>
+        <label for="pixelInput">Enter value in pixels:</label>
+        <input type="number" id="pixelInput" placeholder="Enter pixels" />
+        <p class="output">Output: <span id="clampOutput">clamp(7px, 0.53vw, 10px)</span></p>
+    </div>
+
+    <script>
+        const inputField = document.getElementById('pixelInput');
+        const outputField = document.getElementById('clampOutput');
+        const viewportWidth = 1903; // default viewport width
+
+        inputField.addEventListener('input', function() {
+            let pixelValue = parseFloat(inputField.value);
+            if (!isNaN(pixelValue)) {
+                let lowerBound = Math.max(0, pixelValue - 3);  // reducing 3 from the input
+                let vwValue = (pixelValue / viewportWidth) * 100;
+                outputField.textContent = `clamp(${lowerBound}px, ${vwValue.toFixed(2)}vw, ${pixelValue}px)`;
+            } else {
+                outputField.textContent = 'clamp(7px, 0.53vw, 10px)';  // default example output
+            }
+        });
+    </script>
+</body>
+</html>
