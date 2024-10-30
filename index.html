@@ -45,7 +45,7 @@
         <input type="number" id="pixelInput" placeholder="Enter pixels" />
         <p class="output">
             Output:
-            <span id="clampOutput" title="Click to copy">clamp(7px, 0.53vw, 10px)</span>
+            <span id="clampOutput" title="Click to copy">clamp(7px,0.53vw,10px)</span>
         </p>
     </div>
 
@@ -59,9 +59,9 @@
             if (!isNaN(pixelValue)) {
                 let lowerBound = Math.max(0, pixelValue - 3);  // reducing 3 from the input
                 let vwValue = (pixelValue / viewportWidth) * 100;
-                outputField.textContent = `clamp(${lowerBound}px, ${vwValue.toFixed(2)}vw, ${pixelValue}px)`;
+                outputField.textContent = `clamp(${lowerBound}px,${vwValue.toFixed(2)}vw,${pixelValue}px)`;
             } else {
-                outputField.textContent = 'clamp(7px, 0.53vw, 10px)';  // default example output
+                outputField.textContent = 'clamp(7px,0.53vw,10px)';  // default example output
             }
         }
 
