@@ -1,96 +1,108 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Pixel to VW Converter</title>
+    <!-- icon -->
+    <link rel="icon" type="image/png" href="./fav.png" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,100..700;1,100..700&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+      rel="stylesheet"
+    />
+
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 50px;
-        }
-
-        .container {
-            max-width: 400px;
-            margin: 0 auto;
-        }
-
-        input {
-            width: 100%;
-            padding: 10px;
-            font-size: 16px;
-            margin-bottom: 10px;
-            border: 1px solid #ccc;
-        }
-
-        .output {
-            font-size: 18px;
-            font-weight: bold;
-            cursor: pointer;
-            color: #218947;
-            /* default color */
-        }
-
-        .copied {
-            color: green;
-        }
+      body {
+        font-family: "Josefin Sans", sans-serif;
+        background-color: #f2f2f2;
+      }
     </style>
-</head>
+  </head>
 
-<body>
-    <div class="container">
-        <h2>Pixel to VW Converter</h2>
-        <label for="pixelInput">Enter value in pixels:</label>
-        <input type="number" id="pixelInput" placeholder="Enter pixels" />
-        <p class="output">
-            Output:
-            <span id="clampOutput" title="Click to copy">clamp(7px,0.53vw,10px)</span>
+  <body>
+    <div class="flex flex-col justify-between items-center h-screen">
+      <div class="flex flex-col justify-center items-center h-screen">
+        <h2 class="mb-20 text-9xl text-slate-700 mt-10">
+          Pixel to VW Converter
+        </h2>
+        <div class="flex flex-col gap-5">
+          <label for="pixelInput" class="text-6xl text-gray-600"
+            >Enter value in pixels:</label
+          >
+          <input
+            type="number"
+            class="text-3xl my-10 bg-slate-800 p-10 focus:outline-none text-white"
+            id="pixelInput"
+            placeholder="Enter pixels"
+          />
+          <p class="text-3xl mouse-pointer text-center" title="Click to copy">
+            <span class="text-slate-800 font-bold">Output:</span>
+            <span id="clampOutput" title="Click to copy" class="cursor-pointer"
+              >clamp(7px,0.53vw,10px)</span
+            >
+          </p>
+        </div>
+      </div>
+      <footer>
+        <p class="text-slate-600 text-center my-10">
+          Made with ❤️ by
+          <a
+            href="https://github.com/helloarman"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="underline"
+            >Arman Rahman</a
+          >
         </p>
+      </footer>
     </div>
 
     <script>
-        const inputField = document.getElementById('pixelInput');
-        const outputField = document.getElementById('clampOutput');
-        const viewportWidth = 1903; // default viewport width
+      const inputField = document.getElementById("pixelInput");
+      const outputField = document.getElementById("clampOutput");
+      const viewportWidth = 1903; // default viewport width
 
-        function updateOutput() {
-            let pixelValue = parseFloat(inputField.value);
-            if (!isNaN(pixelValue)) {
-                let lowerBound = Math.max(0, pixelValue - 3);  // reducing 3 from the input
-                let vwValue = (pixelValue / viewportWidth) * 100;
-                outputField.textContent = `clamp(${lowerBound}px,${vwValue.toFixed(2)}vw,${pixelValue}px)`;
-            } else {
-                outputField.textContent = 'clamp(7px,0.53vw,10px)';  // default example output
-            }
+      function updateOutput() {
+        let pixelValue = parseFloat(inputField.value);
+        if (!isNaN(pixelValue)) {
+          let lowerBound = Math.max(0, pixelValue - 3); // reducing 3 from the input
+          let vwValue = (pixelValue / viewportWidth) * 100;
+          outputField.textContent = `clamp(${lowerBound}px,${vwValue.toFixed(
+            2
+          )}vw,${pixelValue}px)`;
+        } else {
+          outputField.textContent = "clamp(7px,0.53vw,10px)"; // default example output
         }
+      }
 
-        function copyToClipboard() {
-            const clampText = outputField.textContent;
-            navigator.clipboard.writeText(clampText).then(() => {
-                outputField.classList.add('copied');  // Change color to indicate successful copy
-                outputField.textContent = "Copied!";
+      function copyToClipboard() {
+        const clampText = outputField.textContent;
+        navigator.clipboard.writeText(clampText).then(() => {
+          outputField.classList.add("copied"); // Change color to indicate successful copy
+          outputField.textContent = "Copied!";
 
-                setTimeout(() => {
-                    outputField.classList.remove('copied');
-                    updateOutput();  // Revert to the current clamp output
-                }, 2000);  // Revert back after 2 seconds
-            });
-        }
-
-        // Update the clamp output when input changes
-        inputField.addEventListener('input', updateOutput);
-
-        // Copy to clipboard on output click
-        outputField.addEventListener('click', copyToClipboard);
-
-        // Add keydown event listener for "C" key shortcut
-        document.addEventListener('keydown', function (event) {
-            if (event.key === 'c' || event.key === 'C') {
-                copyToClipboard();
-            }
+          setTimeout(() => {
+            outputField.classList.remove("copied");
+            updateOutput(); // Revert to the current clamp output
+          }, 2000); // Revert back after 2 seconds
         });
-    </script>
-</body>
+      }
 
+      // Update the clamp output when input changes
+      inputField.addEventListener("input", updateOutput);
+
+      // Copy to clipboard on output click
+      outputField.addEventListener("click", copyToClipboard);
+
+      // Add keydown event listener for "C" key shortcut
+      document.addEventListener("keydown", function (event) {
+        if (event.key === "c" || event.key === "C") {
+          copyToClipboard();
+        }
+      });
+    </script>
+  </body>
 </html>
